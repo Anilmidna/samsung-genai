@@ -1,0 +1,21 @@
+{
+  "day": 1,
+  "student_name": "Your Full Name",
+  "github": "your-github-username",
+  "lab": "model_face_off",
+  "p1_winner": "chatgpt",
+  "p1_observation": "What stood out comparing models on Prompt 1",
+  "p2_winner": "claude",
+  "p2_observation": "What stood out comparing models on Prompt 2",
+  "p3_winner": "gemini",
+  "p3_observation": "What stood out comparing models on Prompt 3",
+  "hallucination_found": false,
+  "hallucination_detail": "Model | What it stated | What is actually correct",
+  "overall_winner": "chatgpt",
+  "biggest_surprise": "One sentence on what surprised you most across all 3 prompts",
+  "stretch_done": false,
+  "stretch_prompt": "",
+  "stretch_observation": "",
+  "achievement": "silver",
+  "submitted_at": ""
+}

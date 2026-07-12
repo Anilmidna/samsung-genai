@@ -1,0 +1,1055 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 1 — Introduction to Generative AI | Samsung GenAI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0A1628; --panel:#11213C; --panel-2:#0E1B33; --border:#223A5E;
+  --text:#E7EDF5; --text-dim:#8CA0BF; --accent:#34D8C6; --accent-2:#E8B23D;
+  --game:#7C3AED; --quiz:#DB2777;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.65;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:48px 48px;background-attachment:fixed;}
+body::before{content:"";position:fixed;inset:0;background:var(--bg);opacity:.93;z-index:-1;}
+
+/* ── Progress bar ── */
+#prog{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:999;width:0;transition:width .1s linear;box-shadow:0 0 8px var(--accent);}
+
+/* ── Nav ── */
+.topnav{position:sticky;top:0;z-index:100;background:rgba(10,22,40,.97);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);padding:0 24px;display:flex;overflow-x:auto;scrollbar-width:none;}
+.topnav::-webkit-scrollbar{display:none;}
+.topnav a{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-dim);
+  text-decoration:none;padding:13px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s;}
+.topnav a:hover{color:var(--text);border-color:var(--accent);}
+.topnav a.active{color:var(--accent);border-color:var(--accent);}
+
+/* ── Page ── */
+.page{max-width:920px;margin:0 auto;padding:0 24px 100px;}
+
+/* ── Hero ── */
+.hero{padding:48px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px;}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.led{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 8px var(--accent);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;
+  letter-spacing:-.02em;margin-bottom:14px;line-height:1.15;}
+.hero .sub{font-size:16px;color:var(--text-dim);max-width:600px;line-height:1.65;}
+.sched-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;}
+.sched-pill{font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+  background:var(--panel);border:1px solid var(--border);border-radius:20px;
+  padding:5px 12px;color:var(--text-dim);}
+.sched-pill strong{color:var(--accent);}
+
+/* ── Unit accordion cards ── */
+.unit-card{border:1px solid var(--border);border-radius:12px;margin-bottom:14px;
+  background:var(--panel);overflow:hidden;transition:border-color .2s;}
+.unit-card:hover{border-color:rgba(52,216,198,.4);}
+.unit-card.open{border-color:rgba(52,216,198,.5);}
+.unit-header{display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;cursor:pointer;user-select:none;gap:16px;}
+.unit-header:hover .unit-cta{color:var(--accent);}
+.unit-left{display:flex;align-items:flex-start;gap:16px;flex:1;min-width:0;}
+.unit-num{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);
+  background:rgba(52,216,198,.1);border:1px solid rgba(52,216,198,.25);
+  border-radius:6px;padding:6px 10px;flex-shrink:0;}
+.unit-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px;}
+.unit-hook{font-size:13.5px;color:var(--text-dim);line-height:1.5;}
+.unit-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.unit-dur{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text-dim);
+  border:1px solid var(--border);border-radius:4px;padding:3px 8px;}
+.unit-cta{font-family:'IBM Plex Mono',monospace;font-size:18px;color:var(--text-dim);
+  transition:transform .3s,color .2s;}
+.unit-card.open .unit-cta{transform:rotate(90deg);color:var(--accent);}
+.unit-body{display:none;}
+.unit-card.open .unit-body{display:block;animation:slideIn .25s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+.unit-inner{padding:0 24px 28px;}
+
+/* ── Content panels inside units ── */
+.cpanel{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;
+  padding:20px 22px;margin-bottom:14px;position:relative;}
+.cpanel::before{content:"";position:absolute;top:-1px;left:-1px;width:14px;height:14px;
+  background:var(--panel);border-right:1px solid var(--border);border-bottom:1px solid var(--border);
+  border-radius:0 0 6px 0;}
+.cpanel h3{font-family:'Space Grotesk',sans-serif;font-size:15.5px;font-weight:600;
+  color:var(--accent-2);margin-bottom:10px;}
+.cpanel p{font-size:14.5px;margin-bottom:9px;line-height:1.6;}
+.cpanel p:last-child{margin-bottom:0;}
+.cpanel ul{padding-left:18px;font-size:14.5px;}
+.cpanel li{margin-bottom:6px;line-height:1.55;}
+.key{color:var(--accent);font-weight:500;}
+.key2{color:var(--accent-2);font-weight:500;}
+
+/* ── Flip cards (AI tools) ── */
+.flip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:14px;}
+.flip-card{height:160px;perspective:1000px;cursor:pointer;}
+.flip-card-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flip-card.flipped .flip-card-inner{transform:rotateY(180deg);}
+.flip-front,.flip-back{position:absolute;inset:0;backface-visibility:hidden;
+  border-radius:10px;padding:16px;display:flex;flex-direction:column;}
+.flip-front{background:var(--panel-2);border:1px solid var(--border);}
+.flip-back{background:rgba(52,216,198,.07);border:1px solid rgba(52,216,198,.3);transform:rotateY(180deg);}
+.flip-icon{font-size:26px;margin-bottom:8px;}
+.flip-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--accent-2);margin-bottom:4px;}
+.flip-tagline{font-size:12.5px;color:var(--text-dim);line-height:1.4;}
+.flip-hint{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:auto;opacity:.6;}
+.flip-back-title{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px;}
+.flip-back p{font-size:12px;color:var(--text);line-height:1.5;margin-bottom:4px;}
+.flip-back .limit{font-size:11px;color:#F87171;margin-top:4px;}
+
+/* ── Animated stat counters ── */
+.stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.stat-box{flex:1;min-width:110px;background:var(--panel-2);border:1px solid var(--border);
+  border-radius:8px;padding:14px;}
+.stat-num{font-family:'IBM Plex Mono',monospace;font-size:22px;color:var(--accent);font-weight:600;}
+.stat-label{font-size:12px;color:var(--text-dim);margin-top:3px;line-height:1.4;}
+
+/* ── Compare table ── */
+.ctable{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:14px;}
+.ctable th{background:rgba(52,216,198,.06);border:1px solid var(--border);
+  padding:9px 13px;text-align:left;font-family:'Space Grotesk',sans-serif;
+  font-size:12.5px;font-weight:600;color:var(--accent-2);}
+.ctable td{border:1px solid var(--border);padding:9px 13px;background:var(--panel-2);vertical-align:top;font-size:13.5px;}
+.ctable tr:hover td{background:rgba(52,216,198,.04);}
+
+/* ── Quote ── */
+.quote{border-left:3px solid var(--accent);padding:12px 18px;margin:14px 0;
+  background:rgba(52,216,198,.04);border-radius:0 6px 6px 0;
+  font-size:14.5px;font-style:italic;color:var(--text-dim);}
+.quote cite{display:block;margin-top:6px;font-size:12.5px;font-style:normal;color:var(--accent-2);}
+
+/* ── Clickable timeline ── */
+.tl-wrap{display:grid;grid-template-columns:200px 1fr;gap:16px;margin-bottom:14px;}
+@media(max-width:640px){.tl-wrap{grid-template-columns:1fr;}}
+.tl-years{display:flex;flex-direction:column;gap:4px;}
+.tl-btn{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--text-dim);
+  background:var(--panel-2);border:1px solid var(--border);border-radius:6px;
+  padding:8px 12px;cursor:pointer;text-align:left;transition:.15s;}
+.tl-btn:hover{border-color:var(--accent);color:var(--text);}
+.tl-btn.active{background:rgba(52,216,198,.1);border-color:var(--accent);color:var(--accent);}
+.tl-btn.star{color:var(--accent-2);}
+.tl-btn.star.active{background:rgba(232,178,61,.1);border-color:var(--accent-2);color:var(--accent-2);}
+.tl-detail{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;
+  padding:20px;display:none;}
+.tl-detail.active{display:block;animation:fadeIn .2s;}
+.tl-detail-year{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);margin-bottom:8px;}
+.tl-detail-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px;}
+.tl-detail-body{font-size:14px;color:var(--text-dim);line-height:1.6;}
+.tl-detail-why{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);
+  font-size:13px;color:var(--accent-2);font-style:italic;}
+
+/* ── Era tabs ── */
+.era-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.era-tab{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:7px 14px;
+  border:1px solid var(--border);border-radius:20px;background:var(--panel-2);
+  color:var(--text-dim);cursor:pointer;transition:.15s;}
+.era-tab:hover{border-color:var(--accent);color:var(--text);}
+.era-tab.active{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600;}
+.era-panel{display:none;animation:fadeIn .2s;}
+.era-panel.active{display:block;}
+
+/* ── Clickable architecture diagram ── */
+.arch-diagram{margin:16px 0;}
+.arch-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.arch-node{font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+  background:var(--panel-2);border:1px solid var(--border);border-radius:6px;
+  padding:9px 14px;cursor:pointer;transition:.15s;text-align:center;}
+.arch-node:hover{border-color:var(--accent);color:var(--accent);}
+.arch-node.active{background:rgba(52,216,198,.1);border-color:var(--accent);color:var(--accent);}
+.arch-arrow{color:var(--text-dim);font-size:14px;flex-shrink:0;}
+.arch-info{display:none;background:var(--panel-2);border:1px solid var(--border);
+  border-radius:8px;padding:16px;margin-top:8px;animation:fadeIn .2s;}
+.arch-info.active{display:block;}
+.arch-info-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;
+  color:var(--accent-2);margin-bottom:6px;}
+.arch-info-body{font-size:13.5px;color:var(--text-dim);line-height:1.6;}
+.arch-info-example{margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+  color:var(--accent);background:var(--bg);border-radius:4px;padding:8px 10px;}
+
+/* ── Self-check ── */
+.selfcheck{background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.3);
+  border-radius:8px;padding:16px 18px;margin:16px 0;}
+.selfcheck-q{font-size:14px;color:#C4B5FD;margin-bottom:10px;font-weight:500;}
+.selfcheck-btn{font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+  background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.4);
+  color:#A78BFA;border-radius:6px;padding:7px 14px;cursor:pointer;transition:.15s;}
+.selfcheck-btn:hover{background:rgba(124,58,237,.25);}
+.selfcheck-ans{display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(124,58,237,.2);
+  font-size:14px;color:var(--text-dim);line-height:1.6;animation:fadeIn .2s;}
+.selfcheck-ans.show{display:block;}
+
+/* ── In-class game cards ── */
+.game-card{background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.35);
+  border-radius:10px;overflow:hidden;margin:18px 0;}
+.game-header{display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;cursor:pointer;}
+.game-header:hover{background:rgba(124,58,237,.05);}
+.game-header-left{display:flex;align-items:center;gap:12px;}
+.game-tag{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:#A78BFA;background:rgba(124,58,237,.15);
+  border:1px solid rgba(124,58,237,.3);border-radius:4px;padding:3px 8px;}
+.game-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:#C4B5FD;}
+.game-toggle{font-family:'IBM Plex Mono',monospace;font-size:16px;color:#A78BFA;transition:transform .3s;}
+.game-card.open .game-toggle{transform:rotate(90deg);}
+.game-body{display:none;padding:0 20px 20px;}
+.game-card.open .game-body{display:block;animation:slideIn .2s;}
+.game-dur{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A78BFA;
+  border:1px solid rgba(124,58,237,.3);border-radius:4px;padding:2px 8px;margin-bottom:10px;display:inline-block;}
+.game-desc{font-size:14px;color:var(--text-dim);margin-bottom:10px;line-height:1.55;}
+.game-steps{list-style:none;padding:0;counter-reset:gs;}
+.game-steps li{counter-increment:gs;display:flex;gap:10px;margin-bottom:8px;font-size:14px;color:var(--text-dim);}
+.game-steps li::before{content:counter(gs);min-width:20px;height:20px;border-radius:50%;
+  background:rgba(124,58,237,.2);color:#A78BFA;font-family:'IBM Plex Mono',monospace;font-size:11px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.game-cards-list{margin-top:10px;}
+.game-cards-list li{font-size:13.5px;}
+
+/* ── AhaSlides marker ── */
+.quiz-marker{background:rgba(219,39,119,.07);border:1px solid rgba(219,39,119,.35);
+  border-radius:8px;padding:14px 18px;margin:24px 0;display:flex;align-items:center;gap:14px;}
+.quiz-icon{font-size:20px;flex-shrink:0;}
+.quiz-title{font-family:'IBM Plex Mono',monospace;font-size:13.5px;color:#F472B6;font-weight:600;}
+.quiz-desc{font-size:12px;color:var(--text-dim);margin-top:2px;}
+
+/* ── Prompt compare ── */
+.prompt-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+@media(max-width:600px){.prompt-cmp{grid-template-columns:1fr;}}
+.prompt-block{}
+.prompt-tag{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;margin-bottom:5px;}
+.ptag-bad{color:#F87171;}.ptag-good{color:var(--accent);}
+.prompt-box{background:var(--panel-2);border:1px solid var(--border);border-radius:6px;
+  padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.6;white-space:pre-wrap;}
+.prompt-box.bad{border-color:rgba(248,113,113,.3);color:#FCA5A5;}
+.prompt-box.good{border-color:rgba(52,216,198,.3);color:var(--accent);}
+
+/* ── Samsung product flip cards ── */
+.samsung-flip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:14px;}
+.s-flip{height:140px;perspective:1000px;cursor:pointer;}
+.s-flip-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.s-flip.flipped .s-flip-inner{transform:rotateY(180deg);}
+.s-flip-front,.s-flip-back{position:absolute;inset:0;backface-visibility:hidden;
+  border-radius:10px;padding:14px;display:flex;flex-direction:column;}
+.s-flip-front{background:var(--panel-2);border:1px solid var(--border);}
+.s-flip-back{background:rgba(232,178,61,.06);border:1px solid rgba(232,178,61,.3);transform:rotateY(180deg);}
+.s-flip-icon{font-size:22px;margin-bottom:6px;}
+.s-flip-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--accent-2);}
+.s-flip-sub{font-size:12px;color:var(--text-dim);margin-top:3px;}
+.s-flip-hint{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:auto;opacity:.6;}
+.s-flip-back p{font-size:12px;color:var(--text);line-height:1.5;margin-bottom:4px;}
+
+/* ── Labs section ── */
+.lab-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:24px 26px;margin-bottom:16px;}
+.lab-badge{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  background:rgba(52,216,198,.1);color:var(--accent);border:1px solid rgba(52,216,198,.3);
+  border-radius:4px;padding:3px 10px;display:inline-block;margin-bottom:12px;}
+.lab-card h3{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;margin-bottom:8px;}
+.lab-role{font-size:13px;font-family:'IBM Plex Mono',monospace;color:var(--accent-2);margin-bottom:10px;}
+.lab-card .desc{font-size:15px;color:var(--text-dim);margin-bottom:14px;line-height:1.6;}
+.lab-tasks{padding-left:20px;font-size:14.5px;}
+.lab-tasks li{margin-bottom:7px;line-height:1.55;}
+.stretch-note{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;
+  color:var(--accent-2);border:1px solid rgba(232,178,61,.3);border-radius:4px;
+  padding:2px 9px;margin:10px 0 6px;}
+.lab-link{display:inline-block;margin-top:14px;background:var(--accent);color:var(--bg);
+  font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;
+  text-decoration:none;padding:10px 20px;border-radius:6px;transition:.15s;}
+.lab-link:hover{opacity:.85;}
+
+/* ── Achievement grid ── */
+.ach-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0;}
+@media(max-width:600px){.ach-grid{grid-template-columns:1fr 1fr;}}
+.ach-card{background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
+.ach-icon{font-size:22px;margin-bottom:5px;}
+.ach-name{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;margin-bottom:3px;}
+.ach-desc{font-size:11.5px;color:var(--text-dim);}
+
+/* ── Info box ── */
+.info-box{background:rgba(52,216,198,.05);border:1px solid rgba(52,216,198,.2);
+  border-radius:8px;padding:12px 16px;margin:12px 0;font-size:14px;color:var(--text-dim);}
+.info-box strong{color:var(--accent);}
+
+/* ── RAI cards ── */
+.rai-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px;}
+.rai-card{background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
+.rai-icon{font-size:22px;margin-bottom:6px;}
+.rai-name{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--accent-2);}
+.rai-desc{font-size:11.5px;color:var(--text-dim);margin-top:4px;line-height:1.4;}
+
+/* ── Fade-in on scroll ── */
+.fade-in{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s;}
+.fade-in.visible{opacity:1;transform:none;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* ── Section headings (non-unit) ── */
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+section>h2{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;
+  letter-spacing:-.01em;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+
+<nav class="topnav">
+  <a href="#overview">Overview</a>
+  <a href="#unit1">AI Trends</a>
+  <a href="#unit2">Evolution</a>
+  <a href="#unit3">Core Tech</a>
+  <a href="#unit4">Samsung</a>
+  <a href="#prompting">Prompting</a>
+  <a href="#rai">Ethics</a>
+  <a href="#labs">Labs</a>
+</nav>
+
+<div class="page">
+
+<!-- ── HERO ── -->
+<div class="hero" id="overview">
+  <p class="eyebrow"><span class="led"></span>Samsung GenAI Program &nbsp;·&nbsp; Day 01</p>
+  <h1>Introduction to Generative AI</h1>
+  <p class="sub">From the 1950 Turing Test to GPT-4 in 2024 — seven decades of AI history, the technology behind it, and what it means for the engineers who will deploy it at scale.</p>
+  <div class="sched-row">
+    <span class="sched-pill"><strong>08:45–10:00</strong> Block 1</span>
+    <span class="sched-pill"><strong>10:15–11:45</strong> Lab 1</span>
+    <span class="sched-pill"><strong>13:00–14:15</strong> Block 2</span>
+    <span class="sched-pill"><strong>14:30–16:00</strong> Lab 2</span>
+    <span class="sched-pill"><strong>16:15–16:45</strong> Live Challenge</span>
+  </div>
+</div>
+
+<!-- ── OVERVIEW ── -->
+<section id="overview-obj" style="margin-bottom:40px;">
+  <div class="cpanel fade-in">
+    <h3>Today's learning outcomes — you should be able to do each of these by 5 PM</h3>
+    <ul>
+      <li>Map the AI landscape in 2025 and select the right model for a given enterprise task</li>
+      <li>Trace the technical progression: Rule-based → ML → Deep Learning → Generative AI</li>
+      <li>Explain the Transformer architecture at a conceptual level (tokens, embeddings, self-attention, next-token prediction)</li>
+      <li>Explain how Diffusion models generate images — and when to use a Diffusion model vs an LLM</li>
+      <li>Identify GenAI use cases within Samsung's product ecosystem</li>
+      <li>Write a structured prompt using the 4-element framework (full 6-element: Day 2)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     UNIT 1 — AI & GenAI Trends
+═══════════════════════════════════════════ -->
+<div class="unit-card fade-in" id="unit1">
+  <div class="unit-header" onclick="toggleUnit('unit1')">
+    <div class="unit-left">
+      <span class="unit-num">01</span>
+      <div>
+        <div class="unit-title">AI &amp; GenAI Trends</div>
+        <div class="unit-hook">300 million weekly users, $200 billion invested, a new tool every week — why the AI landscape of 2025 looks nothing like 2022, and how to navigate it as an engineer</div>
+      </div>
+    </div>
+    <div class="unit-right">
+      <span class="unit-dur">1.5H</span>
+      <span class="unit-cta">›</span>
+    </div>
+  </div>
+  <div class="unit-body">
+  <div class="unit-inner">
+
+    <!-- Animated stats -->
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-num" data-target="300">0</div><div class="stat-label">Million weekly ChatGPT users (2025)</div></div>
+      <div class="stat-box"><div class="stat-num" data-target="200">0</div><div class="stat-label">Billion USD big-tech AI investment (2024)</div></div>
+      <div class="stat-box"><div class="stat-num" data-target="40">0</div><div class="stat-label">% enterprise tasks AI-assisted by 2027 (Gartner)</div></div>
+      <div class="stat-box"><div class="stat-num" data-target="1800">0</div><div class="stat-label">Billion USD GenAI market size by 2030</div></div>
+    </div>
+
+    <!-- Flip cards for tools -->
+    <div class="cpanel">
+      <h3>The Multi-LLM Era — click each card to see enterprise fit</h3>
+      <div class="flip-grid">
+
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-front"><div class="flip-icon">💬</div><div class="flip-name">ChatGPT</div><div class="flip-tagline">OpenAI · GPT-4o · Most widely used</div><div class="flip-hint">click to flip →</div></div>
+            <div class="flip-back"><div class="flip-back-title">Enterprise fit</div><p>Best for: drafting, summarisation, broad reasoning, multimodal analysis</p><p>Samsung use: Galaxy AI content generation, Bixby dialogue</p><p class="limit">⚠ Data privacy — prompts may train the model</p></div>
+          </div>
+        </div>
+
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-front"><div class="flip-icon">🔮</div><div class="flip-name">Gemini</div><div class="flip-tagline">Google · Native multimodal · 1M context</div><div class="flip-hint">click to flip →</div></div>
+            <div class="flip-back"><div class="flip-back-title">Enterprise fit</div><p>Best for: long-document analysis, Google Workspace integration, code + text combined</p><p>Samsung use: competitor product research, large PDF analysis</p><p class="limit">⚠ Google retains data for model training by default</p></div>
+          </div>
+        </div>
+
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-front"><div class="flip-icon">🟣</div><div class="flip-name">Claude</div><div class="flip-tagline">Anthropic · Safety-focused · 200K context</div><div class="flip-hint">click to flip →</div></div>
+            <div class="flip-back"><div class="flip-back-title">Enterprise fit</div><p>Best for: complex instructions, long documents, code review, sensitive content handling</p><p>Samsung use: internal policy document analysis, legal draft review</p><p class="limit">⚠ Stricter refusals — may decline borderline enterprise tasks</p></div>
+          </div>
+        </div>
+
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-front"><div class="flip-icon">🪟</div><div class="flip-name">Copilot</div><div class="flip-tagline">Microsoft · M365 integrated · Enterprise-first</div><div class="flip-hint">click to flip →</div></div>
+            <div class="flip-back"><div class="flip-back-title">Enterprise fit</div><p>Best for: Word/Excel/Teams/Outlook automation, enterprise data grounded by Microsoft Graph</p><p>Samsung use: internal comms, HR analytics, supply-chain reports in Excel</p><p class="limit">⚠ Requires M365 E3/E5 licence — not free</p></div>
+          </div>
+        </div>
+
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-front"><div class="flip-icon">🦙</div><div class="flip-name">Llama 3</div><div class="flip-tagline">Meta · Open-weight · Run anywhere</div><div class="flip-hint">click to flip →</div></div>
+            <div class="flip-back"><div class="flip-back-title">Enterprise fit</div><p>Best for: on-premises deployment, fine-tuning on proprietary data, no API cost</p><p>Samsung use: on-device Galaxy AI processing where cloud isn't possible</p><p class="limit">⚠ Needs GPU infrastructure — not plug-and-play</p></div>
+          </div>
+        </div>
+
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-front"><div class="flip-icon">⚡</div><div class="flip-name">Grok</div><div class="flip-tagline">xAI · Real-time X data · Less filtered</div><div class="flip-hint">click to flip →</div></div>
+            <div class="flip-back"><div class="flip-back-title">Enterprise fit</div><p>Best for: real-time trend monitoring, social intelligence, X/Twitter data analysis</p><p>Samsung use: product launch sentiment tracking, competitive social monitoring</p><p class="limit">⚠ Weaker enterprise compliance story vs. OpenAI/Anthropic</p></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="cpanel">
+      <h3>Enterprise use case map</h3>
+      <table class="ctable">
+        <thead><tr><th>Business Function</th><th>GenAI Application</th><th>Productivity Gain</th></tr></thead>
+        <tbody>
+          <tr><td>Software Engineering</td><td>Code generation, debugging, test writing, documentation</td><td>40–55% faster dev cycles (GitHub 2024 survey)</td></tr>
+          <tr><td>Customer Support</td><td>First-response chatbots, sentiment routing, call summarisation</td><td>30–40% cost reduction, 24/7 coverage</td></tr>
+          <tr><td>Legal &amp; Compliance</td><td>Contract review, clause extraction, regulatory comparison</td><td>80%+ reduction in manual review hours</td></tr>
+          <tr><td>Marketing</td><td>Personalised campaign copy at scale, A/B test generation, SEO</td><td>3–5× content throughput</td></tr>
+          <tr><td>Research &amp; Intelligence</td><td>Literature synthesis, competitive briefs, earnings call analysis</td><td>Hours of desk research → minutes</td></tr>
+          <tr><td>HR &amp; Recruiting</td><td>JD writing, CV screening, onboarding Q&A, L&amp;D content</td><td>Bias reduction + 60% time saving</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="quote">
+      "Think of AI as a brilliant friend who happens to have the knowledge of a doctor, lawyer, financial advisor, and expert in whatever you need. As a friend, they give you real information based on your specific situation rather than overly cautious advice."
+      <cite>— Ethan Mollick, <em>Co-Intelligence: Living and Working with AI</em> (2024)</cite>
+    </div>
+
+    <!-- Self-check -->
+    <div class="selfcheck">
+      <div class="selfcheck-q">🧠 Enterprise check: Samsung is building a tool to analyse 200-page supplier contracts for risk clauses. No data can leave Samsung's servers. Which model family fits — and which doesn't?</div>
+      <button class="selfcheck-btn" onclick="toggleCheck(this)">Reveal answer ↓</button>
+      <div class="selfcheck-ans">Open-weight models (Llama 3, Mistral) deployed on Samsung's own infrastructure. Cloud-hosted APIs (ChatGPT, Gemini, Claude) are ruled out — data cannot leave the perimeter. This is a common enterprise constraint you will encounter at every MNC client.</div>
+    </div>
+
+    <!-- Game 1 -->
+    <div class="game-card" id="game1">
+      <div class="game-header" onclick="toggleGame('game1')">
+        <div class="game-header-left">
+          <span class="game-tag">In-class game 1 of 3</span>
+          <span class="game-title">Discriminative vs Generative Sort</span>
+        </div>
+        <span class="game-toggle">›</span>
+      </div>
+      <div class="game-body">
+        <span class="game-dur">⏱ 10–12 minutes · teaches: core AI paradigm distinction</span>
+        <p class="game-desc">Trainer reads 10 AI tool descriptions. Students shout Discriminative or Generative. Fastest way to make the distinction stick.</p>
+        <ol class="game-steps">
+          <li>Trainer reads each item below. Students call out: <strong style="color:var(--accent)">DISCRIMINATIVE</strong> or <strong style="color:var(--accent-2)">GENERATIVE</strong></li>
+          <li>Quick show of hands after each one — note disagreements</li>
+          <li>Reveal: classifier = gives you a label / decision. Generator = creates new content</li>
+          <li>Wrap: "Everything you've used casually for years is mostly discriminative. The new wave is generative."</li>
+        </ol>
+        <ul class="game-cards-list">
+          <li>Gmail spam filter → <em>Discriminative</em></li>
+          <li>ChatGPT writing a cover letter → <em>Generative</em></li>
+          <li>Netflix "you might also like" → <em>Discriminative</em></li>
+          <li>DALL-E illustrating a futuristic Samsung campus → <em>Generative</em></li>
+          <li>Google Photos identifying faces → <em>Discriminative</em></li>
+          <li>GitHub Copilot completing your code → <em>Generative</em></li>
+          <li>Credit scoring model predicting loan default → <em>Discriminative</em></li>
+          <li>Suno composing a song from a text prompt → <em>Generative</em></li>
+          <li>Medical AI flagging a tumour on an X-ray → <em>Discriminative</em></li>
+          <li>Samsung Gauss summarising a meeting transcript → <em>Generative</em></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     UNIT 2 — Evolution of GenAI
+═══════════════════════════════════════════ -->
+<div class="unit-card fade-in" id="unit2">
+  <div class="unit-header" onclick="toggleUnit('unit2')">
+    <div class="unit-left">
+      <span class="unit-num">02</span>
+      <div>
+        <div class="unit-title">Evolution &amp; Definition of GenAI</div>
+        <div class="unit-hook">A 1950 thought experiment → a 2022 product used by 100 million people in 60 days. Click the milestones to understand why each one mattered</div>
+      </div>
+    </div>
+    <div class="unit-right"><span class="unit-dur">1.5H</span><span class="unit-cta">›</span></div>
+  </div>
+  <div class="unit-body">
+  <div class="unit-inner">
+
+    <div class="cpanel">
+      <h3>AI History — click any year to explore what happened and why it mattered</h3>
+      <div class="tl-wrap">
+        <div class="tl-years">
+          <button class="tl-btn" data-year="1950" onclick="showTl('1950')">1950</button>
+          <button class="tl-btn" data-year="1956" onclick="showTl('1956')">1956</button>
+          <button class="tl-btn" data-year="1980" onclick="showTl('1980')">1980s</button>
+          <button class="tl-btn" data-year="1986" onclick="showTl('1986')">1986</button>
+          <button class="tl-btn star" data-year="2012" onclick="showTl('2012')">2012 ★</button>
+          <button class="tl-btn star" data-year="2016" onclick="showTl('2016')">2016 ★</button>
+          <button class="tl-btn star" data-year="2017" onclick="showTl('2017')">2017 ★</button>
+          <button class="tl-btn" data-year="2020" onclick="showTl('2020')">2020</button>
+          <button class="tl-btn star" data-year="2022" onclick="showTl('2022')">2022 ★</button>
+          <button class="tl-btn" data-year="2024" onclick="showTl('2024')">2024–25</button>
+        </div>
+        <div id="tl-panel" class="tl-detail active" data-year="start">
+          <div class="tl-detail-year">← Select a year</div>
+          <div class="tl-detail-title">Seven decades of AI — in 10 clicks</div>
+          <div class="tl-detail-body">Click any year on the left to explore what happened at that moment and why it was a turning point for the field.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cpanel">
+      <h3>The Four Eras — click each to compare</h3>
+      <div class="era-tabs">
+        <button class="era-tab" onclick="showEra('rules')">Rule-Based</button>
+        <button class="era-tab" onclick="showEra('ml')">Classical ML</button>
+        <button class="era-tab" onclick="showEra('dl')">Deep Learning</button>
+        <button class="era-tab" onclick="showEra('gen')">Generative AI</button>
+      </div>
+      <div class="era-panel" id="era-rules">
+        <table class="ctable"><tbody>
+          <tr><td><strong>How it learns</strong></td><td>Humans hand-code every if-then rule. No learning from data.</td></tr>
+          <tr><td><strong>Limitation</strong></td><td>Breaks on anything outside the rulebook. Can't generalise.</td></tr>
+          <tr><td><strong>Examples</strong></td><td>Tax calculators, ELIZA (1966), MYCIN medical diagnosis (1970s)</td></tr>
+          <tr><td><strong>Why replaced</strong></td><td>Real world has too many exceptions to codify by hand</td></tr>
+        </tbody></table>
+      </div>
+      <div class="era-panel" id="era-ml">
+        <table class="ctable"><tbody>
+          <tr><td><strong>How it learns</strong></td><td>Learns statistical patterns from labelled training data</td></tr>
+          <tr><td><strong>Limitation</strong></td><td>Needs hand-crafted features; struggles with raw images/audio/text</td></tr>
+          <tr><td><strong>Examples</strong></td><td>Spam filters, credit scoring, fraud detection, recommendation engines</td></tr>
+          <tr><td><strong>Why replaced</strong></td><td>Feature engineering is expensive and doesn't scale to unstructured data</td></tr>
+        </tbody></table>
+      </div>
+      <div class="era-panel" id="era-dl">
+        <table class="ctable"><tbody>
+          <tr><td><strong>How it learns</strong></td><td>Learns features automatically from raw data via deep neural networks</td></tr>
+          <tr><td><strong>Limitation</strong></td><td>Needs massive labelled datasets; expensive GPU training; output is a prediction not new content</td></tr>
+          <tr><td><strong>Examples</strong></td><td>Image recognition (AlexNet 2012), speech-to-text, AlphaGo</td></tr>
+          <tr><td><strong>Why replaced</strong></td><td>Still discriminative — classifies input, doesn't create output. Can't write, draw, or code.</td></tr>
+        </tbody></table>
+      </div>
+      <div class="era-panel" id="era-gen">
+        <table class="ctable"><tbody>
+          <tr><td><strong>How it learns</strong></td><td>Self-supervised pre-training on internet-scale unlabelled data (predict next token)</td></tr>
+          <tr><td><strong>Strength</strong></td><td>One model, many tasks. Generates novel content. Natural language interface — no code needed.</td></tr>
+          <tr><td><strong>Examples</strong></td><td>GPT-4, Claude 3, Gemini, DALL-E, Sora, Suno, Stable Diffusion</td></tr>
+          <tr><td><strong>Enterprise implication</strong></td><td>Democratises AI — a business analyst can now use AI without a data science team</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- Self-check -->
+    <div class="selfcheck">
+      <div class="selfcheck-q">🧠 Why did AlphaGo (2016) matter more than Deep Blue (1997) beating Kasparov at chess?</div>
+      <button class="selfcheck-btn" onclick="toggleCheck(this)">Reveal answer ↓</button>
+      <div class="selfcheck-ans">Deep Blue used brute-force computation + handcrafted rules — it was the Rule-Based era at scale. AlphaGo used deep reinforcement learning to develop intuition the programmers couldn't articulate. Go has more board positions than atoms in the universe — no rulebook could cover it. This proved deep learning could master domains where human-codified knowledge fails.</div>
+    </div>
+
+    <!-- Game 2 -->
+    <div class="game-card" id="game2">
+      <div class="game-header" onclick="toggleGame('game2')">
+        <div class="game-header-left">
+          <span class="game-tag">In-class game 2 of 3</span>
+          <span class="game-title">Human Embedding Space</span>
+        </div>
+        <span class="game-toggle">›</span>
+      </div>
+      <div class="game-body">
+        <span class="game-dur">⏱ 10–12 minutes · teaches: embeddings, semantic similarity, vector space</span>
+        <p class="game-desc">Students physically become the vector space — proximity in the room = semantic similarity. No maths required.</p>
+        <ol class="game-steps">
+          <li>Clear a space. Trainer calls a word — students move to show similarity. People cluster near words they feel are related, move away from opposites.</li>
+          <li>Round 1: <em>King, Queen, Prince, Car, Bus, Dog, Cat, Apple, Orange, Samsung, Apple (the company)</em> — watch "Apple" cluster differently depending on context</li>
+          <li>Trainer calls "King minus Man plus Woman" — who do you stand near? (Answer: Queen)</li>
+          <li>Round 2: <em>Seoul, Tokyo, Samsung, Apple, Hunger, Tired, Happy, Fast, Slow</em></li>
+          <li>Debrief: "This spatial relationship — similar meaning = nearby coordinates — is exactly what an embedding layer does inside every LLM. king − man + woman = queen is a real vector arithmetic result from Word2Vec."</li>
+        </ol>
+      </div>
+    </div>
+
+  </div>
+  </div>
+</div>
+
+<!-- AhaSlides #1 -->
+<div class="quiz-marker fade-in">
+  <span class="quiz-icon">📊</span>
+  <div>
+    <div class="quiz-title">AhaSlides — Checkpoint #1 &nbsp;·&nbsp; 10:00–10:15</div>
+    <div class="quiz-desc">Covers Units 1 &amp; 2 · 8 questions · AI history, discriminative vs generative, foundation model vocabulary, enterprise use cases</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     UNIT 3 — Core Tech
+═══════════════════════════════════════════ -->
+<div class="unit-card fade-in" id="unit3">
+  <div class="unit-header" onclick="toggleUnit('unit3')">
+    <div class="unit-left">
+      <span class="unit-num">03</span>
+      <div>
+        <div class="unit-title">Core Technology: Transformer &amp; Diffusion</div>
+        <div class="unit-hook">Why a 2017 paper with the title "Attention Is All You Need" made every previous approach obsolete — click the architecture components to find out what's actually happening inside an LLM</div>
+      </div>
+    </div>
+    <div class="unit-right"><span class="unit-dur">2H</span><span class="unit-cta">›</span></div>
+  </div>
+  <div class="unit-body">
+  <div class="unit-inner">
+
+    <div class="cpanel">
+      <h3>The Transformer — click any component to see what it does</h3>
+      <div class="arch-diagram">
+        <div class="arch-flow">
+          <div class="arch-node" data-comp="input" onclick="showArch('input')">Input Text</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node" data-comp="tokenizer" onclick="showArch('tokenizer')">Tokenizer</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node" data-comp="embed" onclick="showArch('embed')">Embeddings + Position</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node" data-comp="attn" onclick="showArch('attn')">Self-Attention</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node" data-comp="ffn" onclick="showArch('ffn')">Feed-Forward</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node" data-comp="output" onclick="showArch('output')">Output Token</div>
+        </div>
+        <div class="arch-info" id="arch-input" data-comp="input">
+          <div class="arch-info-title">Input Text</div>
+          <div class="arch-info-body">Your raw text prompt. "Translate this to Korean: Hello, how are you?" — everything you type becomes the model's context. The model processes the entire input simultaneously (unlike older RNNs that read one word at a time).</div>
+          <div class="arch-info-example">Example: "The best way to learn programming is to…"</div>
+        </div>
+        <div class="arch-info" id="arch-tokenizer" data-comp="tokenizer">
+          <div class="arch-info-title">Tokenizer</div>
+          <div class="arch-info-body">Text is split into <strong>tokens</strong> — subword units, not whole words. "unbelievable" → ["un", "believ", "able"]. GPT-4 has a vocabulary of ~100K tokens. You pay API cost per token. Context window limits are in tokens, not words (~750 words = ~1000 tokens).</div>
+          <div class="arch-info-example">Example: "Samsung Galaxy" → ["Sam", "sung", " Galaxy"] (3 tokens, not 2 words)</div>
+        </div>
+        <div class="arch-info" id="arch-embed" data-comp="embed">
+          <div class="arch-info-title">Embeddings + Positional Encoding</div>
+          <div class="arch-info-body">Each token is converted to a <strong>vector</strong> — a list of numbers (e.g. 768 numbers for BERT-base). Similar meanings → nearby vectors. "king" and "queen" have vectors much closer together than "king" and "refrigerator."<br><br><strong>Positional encoding</strong> adds information about WHERE a token appears. Transformers process all tokens simultaneously, so without this they'd be order-blind — "dog bites man" and "man bites dog" would look identical.</div>
+          <div class="arch-info-example">king − man + woman ≈ queen (real vector arithmetic from Word2Vec)</div>
+        </div>
+        <div class="arch-info" id="arch-attn" data-comp="attn">
+          <div class="arch-info-title">Multi-Head Self-Attention</div>
+          <div class="arch-info-body">Every token asks: <em>"Which other tokens in this sequence matter most to me right now?"</em> It computes a weighted sum over all other tokens — tokens that are contextually relevant get higher weights.<br><br>Example: In "The animal didn't cross the street because <strong>it</strong> was too tired" — self-attention figures out "it" refers to "animal", not "street", by assigning high attention weight from "it" to "animal".<br><br><strong>Multi-head</strong> means this runs in parallel with different "perspectives" — one head may track grammar, another tracks entities, another tracks topic.</div>
+          <div class="arch-info-example">Query (Q): "what am I looking for?" · Key (K): "what do I contain?" · Value (V): "what do I give if attended to?"</div>
+        </div>
+        <div class="arch-info" id="arch-ffn" data-comp="ffn">
+          <div class="arch-info-title">Feed-Forward Layer</div>
+          <div class="arch-info-body">After attention, each token's representation passes through a fully-connected neural network independently. This is where most of the model's "knowledge" is stored — think of it as fact retrieval. The attention layer figures out context; the FFN layer retrieves relevant knowledge given that context.<br><br>GPT-4 has ~96 layers of attention + FFN stacked on top of each other. Each layer refines the representation further.</div>
+          <div class="arch-info-example">This stack is repeated N times (BERT-base: 12 layers, GPT-4: ~96 layers)</div>
+        </div>
+        <div class="arch-info" id="arch-output" data-comp="output">
+          <div class="arch-info-title">Output Token</div>
+          <div class="arch-info-body">The model outputs a probability score over its entire vocabulary (~100K tokens) for what the next token should be. It samples from the top candidates — controlled by <strong>temperature</strong>. Temperature = 0: always pick the highest probability (deterministic, boring). Temperature = 1: sample proportionally (creative, sometimes surprising).<br><br>Then it feeds that output back as new input and repeats — this is called <strong>autoregressive generation</strong>. That's why streaming text appears word by word.</div>
+          <div class="arch-info-example">"The capital of France is" → [Paris: 94%, Lyon: 2%, London: 1%, ...] → outputs "Paris"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 3 -->
+    <div class="game-card" id="game3">
+      <div class="game-header" onclick="toggleGame('game3')">
+        <div class="game-header-left">
+          <span class="game-tag">In-class game 3 of 3</span>
+          <span class="game-title">Human Autocomplete</span>
+        </div>
+        <span class="game-toggle">›</span>
+      </div>
+      <div class="game-body">
+        <span class="game-dur">⏱ 10–12 minutes · teaches: next-token prediction, temperature, context window</span>
+        <p class="game-desc">Students become the LLM — each person adds ONE word and passes it on. Physical demonstration of autoregressive generation.</p>
+        <ol class="game-steps">
+          <li>Trainer hands a student a post-it with a sentence starter: <em>"The best way to learn machine learning is to…"</em></li>
+          <li>That student says ONE word (next token). Pass to next student — they add one word. Continue around the room.</li>
+          <li>Round 2: Trainer introduces "temperature" — tap a student's shoulder = they must give a random/unexpected word instead of the obvious one. Watch the sentence drift.</li>
+          <li>Round 3: After 15 words, cover the post-it (simulate context window limit) — can students still continue coherently?</li>
+          <li>Debrief: "Each word = one forward pass. Temperature = randomness knob. Forgetting the original sentence = context window. This is literally how GPT generates every response you've ever seen."</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="cpanel">
+      <h3>Diffusion Models — how AI generates images</h3>
+      <p>Completely different from Transformers. They learn to <span class="key">reverse noise</span>.</p>
+      <table class="ctable" style="margin-top:10px;">
+        <thead><tr><th>Step</th><th>What happens</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Forward (training)</strong></td><td>Take a real image → add tiny amounts of Gaussian noise iteratively → after ~1000 steps: pure static. The model learns what noise was added at each step.</td></tr>
+          <tr><td><strong>Reverse (generation)</strong></td><td>Start with pure random noise → iteratively denoise, guided by a text prompt (via CLIP/T5 text encoder), until a coherent image emerges after ~20–50 steps.</td></tr>
+          <tr><td><strong>Latent diffusion</strong></td><td>Modern models (Stable Diffusion, DALL-E 3) work in a compressed latent space — 64×64 instead of 512×512 pixels — then upscale at the end. This is why image generation takes seconds, not hours.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cpanel">
+      <h3>Transformer vs Diffusion — which to use when</h3>
+      <table class="ctable">
+        <thead><tr><th></th><th>Transformer LLM</th><th>Diffusion Model</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Output</strong></td><td>Text, code, structured data, audio</td><td>Images, video, 3D assets</td></tr>
+          <tr><td><strong>Generates via</strong></td><td>Autoregressive token prediction (left→right)</td><td>Iterative denoising from random noise</td></tr>
+          <tr><td><strong>Strength</strong></td><td>Reasoning, language, instruction following, logic</td><td>Photorealism, artistic style, visual coherence</td></tr>
+          <tr><td><strong>Enterprise models</strong></td><td>GPT-4, Claude, Gemini, Llama 3, Mistral</td><td>DALL-E 3, Stable Diffusion XL, Midjourney, Adobe Firefly</td></tr>
+          <tr><td><strong>Samsung uses</strong></td><td>Galaxy AI text features, Bixby, Gauss</td><td>Generative Wallpaper (Galaxy S24+), Vision AI upscaling</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="selfcheck">
+      <div class="selfcheck-q">🧠 A Samsung engineer needs to build two features: (1) a chatbot that answers Galaxy Watch troubleshooting questions, (2) an AI that upscales SD photos to 4K on Samsung TVs. Which model architecture fits each feature — and why are they different?</div>
+      <button class="selfcheck-btn" onclick="toggleCheck(this)">Reveal answer ↓</button>
+      <div class="selfcheck-ans">(1) Troubleshooting chatbot → Transformer-based LLM (decoder-only, like GPT/Claude). Needs to understand natural language questions and generate text responses. (2) 4K upscaling → a form of diffusion/generative upscaling model, or a super-resolution CNN — it needs to generate realistic pixel content, not text. Samsung Vision AI uses exactly this approach on their Neo QLED TVs.</div>
+    </div>
+
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     UNIT 4 — Samsung Use Cases
+═══════════════════════════════════════════ -->
+<div class="unit-card fade-in" id="unit4">
+  <div class="unit-header" onclick="toggleUnit('unit4')">
+    <div class="unit-left">
+      <span class="unit-num">04</span>
+      <div>
+        <div class="unit-title">Industry &amp; Samsung Use Cases</div>
+        <div class="unit-hook">The technology you just studied is already inside products used by 600 million Samsung device owners — flip the cards to see exactly where</div>
+      </div>
+    </div>
+    <div class="unit-right"><span class="unit-dur">Included</span><span class="unit-cta">›</span></div>
+  </div>
+  <div class="unit-body">
+  <div class="unit-inner">
+
+    <div class="cpanel">
+      <h3>Samsung AI ecosystem — click each product to see the GenAI feature</h3>
+      <div class="samsung-flip-grid">
+        <div class="s-flip" onclick="this.classList.toggle('flipped')"><div class="s-flip-inner">
+          <div class="s-flip-front"><div class="s-flip-icon">📱</div><div class="s-flip-name">Galaxy AI</div><div class="s-flip-sub">S24 / S25 series</div><div class="s-flip-hint">flip →</div></div>
+          <div class="s-flip-back"><p><strong>Circle to Search</strong> — circle anything on screen → Google AI identifies it</p><p><strong>Live Translate</strong> — real-time phone call translation (on-device)</p><p><strong>Chat Assist</strong> — rewrites messages in different tones</p><p><strong>Note Assist</strong> — AI summarises meeting notes</p></div>
+        </div></div>
+        <div class="s-flip" onclick="this.classList.toggle('flipped')"><div class="s-flip-inner">
+          <div class="s-flip-front"><div class="s-flip-icon">📺</div><div class="s-flip-name">Vision AI</div><div class="s-flip-sub">Neo QLED / OLED TVs</div><div class="s-flip-hint">flip →</div></div>
+          <div class="s-flip-back"><p><strong>AI Upscaling</strong> — diffusion-based upscaling of SD/HD content to 4K/8K</p><p><strong>Auto HDR Remastering</strong> — adds HDR to SDR content in real time</p><p><strong>AI Sound</strong> — generates object-based surround from stereo</p><p><strong>Generative Wallpaper</strong> — DALL-E-style images generated on-device</p></div>
+        </div></div>
+        <div class="s-flip" onclick="this.classList.toggle('flipped')"><div class="s-flip-inner">
+          <div class="s-flip-front"><div class="s-flip-icon">🏠</div><div class="s-flip-name">SmartThings</div><div class="s-flip-sub">Home AI</div><div class="s-flip-hint">flip →</div></div>
+          <div class="s-flip-back"><p><strong>AI Energy Mode</strong> — learns usage patterns, reduces energy by 15%</p><p><strong>Predictive maintenance</strong> — flags appliance faults before failure</p><p><strong>Natural language control</strong> — "turn off everything except the bedroom light"</p></div>
+        </div></div>
+        <div class="s-flip" onclick="this.classList.toggle('flipped')"><div class="s-flip-inner">
+          <div class="s-flip-front"><div class="s-flip-icon">❤️</div><div class="s-flip-name">Samsung Health</div><div class="s-flip-sub">Galaxy Watch 7</div><div class="s-flip-hint">flip →</div></div>
+          <div class="s-flip-back"><p><strong>Sleep AI</strong> — analyses sleep stages, gives personalised coaching</p><p><strong>Body composition</strong> — estimates body fat % via BIA sensors + AI model</p><p><strong>Stress scoring</strong> — real-time HRV analysis with LLM-generated advice</p></div>
+        </div></div>
+        <div class="s-flip" onclick="this.classList.toggle('flipped')"><div class="s-flip-inner">
+          <div class="s-flip-front"><div class="s-flip-icon">🔬</div><div class="s-flip-name">Samsung Gauss</div><div class="s-flip-sub">Internal LLM</div><div class="s-flip-hint">flip →</div></div>
+          <div class="s-flip-back"><p>Samsung's in-house foundation model, announced late 2023</p><p><strong>Gauss Language</strong> — email compose, document summarise, translation</p><p><strong>Gauss Code</strong> — coding assistant (like Copilot) for Samsung engineers</p><p><strong>Gauss Image</strong> — image generation and editing</p></div>
+        </div></div>
+        <div class="s-flip" onclick="this.classList.toggle('flipped')"><div class="s-flip-inner">
+          <div class="s-flip-front"><div class="s-flip-icon">🎧</div><div class="s-flip-name">Galaxy Buds AI</div><div class="s-flip-sub">Buds 3 Pro</div><div class="s-flip-hint">flip →</div></div>
+          <div class="s-flip-back"><p><strong>Interpreter mode</strong> — real-time translation earpiece-to-earpiece</p><p><strong>Adaptive ANC</strong> — AI learns your ear canal shape for personalised noise cancellation</p><p><strong>Voice detect</strong> — AI detects when you start speaking and adjusts volume automatically</p></div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>Samsung's strategic bet:</strong> On-device AI — processing happens on the phone/TV/appliance itself, not in the cloud. This protects user privacy, reduces latency, and works offline. It requires extremely efficient models (small enough for an Exynos chip, powerful enough to be useful). This is a hard engineering problem and a major differentiator vs competitors who rely entirely on cloud APIs.
+    </div>
+
+  </div>
+  </div>
+</div>
+
+<!-- AhaSlides #2 -->
+<div class="quiz-marker fade-in">
+  <span class="quiz-icon">📊</span>
+  <div>
+    <div class="quiz-title">AhaSlides — Checkpoint #2 &nbsp;·&nbsp; 14:15–14:30</div>
+    <div class="quiz-desc">Covers Units 3 &amp; 4 · 8 questions · Transformer architecture, diffusion models, Samsung product ecosystem, on-device vs cloud AI</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PROMPTING INTRO
+═══════════════════════════════════════════ -->
+<div class="unit-card fade-in" id="prompting">
+  <div class="unit-header" onclick="toggleUnit('prompting')">
+    <div class="unit-left">
+      <span class="unit-num">05</span>
+      <div>
+        <div class="unit-title">Prompt Engineering — Entry Point</div>
+        <div class="unit-hook">The same model, the same question — two completely different outputs depending on how you ask. See the before/after and learn the 4 elements you need for Lab 1</div>
+      </div>
+    </div>
+    <div class="unit-right"><span class="unit-dur">Preview</span><span class="unit-cta">›</span></div>
+  </div>
+  <div class="unit-body">
+  <div class="unit-inner">
+    <div class="info-box"><strong>Note:</strong> Chapter 2 (Day 2) is entirely dedicated to prompt engineering — 6 hours, the full 6-element framework, advanced techniques (CoT, ToT, ReAct). Today is just enough to run the labs effectively.</div>
+    <div class="cpanel">
+      <h3>The same request — before and after engineering</h3>
+      <div class="prompt-cmp">
+        <div class="prompt-block">
+          <div class="prompt-tag ptag-bad">❌ Weak prompt — typical first attempt</div>
+          <div class="prompt-box bad">Write something about Samsung.</div>
+        </div>
+        <div class="prompt-block">
+          <div class="prompt-tag ptag-good">✅ Engineered prompt — 4 elements applied</div>
+          <div class="prompt-box good">You are a technology analyst writing for Samsung's investor relations team. Write a 3-sentence executive summary of Samsung's Galaxy AI strategy for the Q3 2025 earnings call. Focus on competitive differentiation vs Apple. Use formal business language. No bullet points — prose only.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cpanel">
+      <h3>4-element framework for today (full 6-element: Day 2)</h3>
+      <table class="ctable">
+        <thead><tr><th>Element</th><th>What to specify</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Role</strong></td><td>Who should the AI act as?</td><td>"You are a Samsung AI Systems Analyst…"</td></tr>
+          <tr><td><strong>Goal</strong></td><td>What specific output do you need?</td><td>"…evaluate Claude vs GPT-4 for enterprise deployment"</td></tr>
+          <tr><td><strong>Context</strong></td><td>Relevant background / constraints</td><td>"Samsung processes sensitive user data; no cloud APIs allowed"</td></tr>
+          <tr><td><strong>Output format</strong></td><td>Length, structure, tone</td><td>"3-bullet recommendation brief, formal business language"</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     RESPONSIBLE AI INTRO
+═══════════════════════════════════════════ -->
+<div class="unit-card fade-in" id="rai">
+  <div class="unit-header" onclick="toggleUnit('rai')">
+    <div class="unit-left">
+      <span class="unit-num">06</span>
+      <div>
+        <div class="unit-title">Responsible AI — Entry Point</div>
+        <div class="unit-hook">Air Canada's chatbot invented a refund policy that didn't exist. The court held the company liable. Five risks every engineer must know before Lab 1</div>
+      </div>
+    </div>
+    <div class="unit-right"><span class="unit-dur">Preview</span><span class="unit-cta">›</span></div>
+  </div>
+  <div class="unit-body">
+  <div class="unit-inner">
+    <div class="info-box"><strong>Note:</strong> Day 4 is entirely Chapter 4 — AI Ethics and Responsibility (6 hours, case studies, role-play, governance frameworks). Today covers the 5 risks you'll observe firsthand in Lab 1.</div>
+    <div class="rai-grid">
+      <div class="rai-card"><div class="rai-icon">🎭</div><div class="rai-name">Hallucination</div><div class="rai-desc">States false facts confidently. No internal "I don't know." You will catch this in Lab 1.</div></div>
+      <div class="rai-card"><div class="rai-icon">⚖️</div><div class="rai-name">Bias</div><div class="rai-desc">Training data reflects historical inequalities. Outputs can discriminate.</div></div>
+      <div class="rai-card"><div class="rai-icon">🔒</div><div class="rai-name">Privacy</div><div class="rai-desc">Your prompt may contain PII. Cloud models may train on your data.</div></div>
+      <div class="rai-card"><div class="rai-icon">©️</div><div class="rai-name">Copyright</div><div class="rai-desc">Generated content may reproduce copyrighted training data verbatim.</div></div>
+      <div class="rai-card"><div class="rai-icon">👁️</div><div class="rai-name">Human Oversight</div><div class="rai-desc">AI output needs human review before acting on it. Never auto-publish.</div></div>
+    </div>
+    <div class="cpanel">
+      <h3>The Air Canada case (2024) — this is why oversight matters</h3>
+      <p>Air Canada's AI chatbot told a customer he could buy a full-price bereavement ticket now and claim a retroactive discount later — a policy that didn't exist. Customer relied on it, paid full price, got denied the refund, sued. Court ruled: Air Canada is responsible for what its chatbot says.</p>
+      <p><span class="key2">Enterprise implication:</span> When AI speaks on behalf of your company, your company owns the consequences — legally and reputationally. Every customer-facing AI deployment needs a human review gate for consequential outputs. This is the focus of Day 4's role-play exercise.</p>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LABS
+═══════════════════════════════════════════ -->
+<section id="labs" style="margin-top:40px;">
+  <p class="section-label">Today's Labs</p>
+  <h2>Your Mission Today</h2>
+
+  <div class="ach-grid fade-in">
+    <div class="ach-card"><div class="ach-icon">⚪</div><div class="ach-name">Untrained</div><div class="ach-desc">Not submitted</div></div>
+    <div class="ach-card"><div class="ach-icon">🔄</div><div class="ach-name">In Training</div><div class="ach-desc">Partial attempt</div></div>
+    <div class="ach-card"><div class="ach-icon">✅</div><div class="ach-name">Fine-Tuned</div><div class="ach-desc">Base lab complete</div></div>
+    <div class="ach-card"><div class="ach-icon">👑</div><div class="ach-name">Frontier Model</div><div class="ach-desc">Base + stretch done</div></div>
+  </div>
+
+  <div class="lab-card fade-in">
+    <span class="lab-badge">Lab 1 · Pre-Lunch · 10:15–11:45</span>
+    <h3>GenAI Vendor Evaluation</h3>
+    <p class="lab-role">Role: AI Systems Analyst, Samsung AI Centre of Excellence</p>
+    <p class="desc">Run a structured enterprise evaluation of ChatGPT, Gemini, and Claude across 5 Samsung business scenarios. Produce a Vendor Assessment Report — the same format used by Deloitte, TCS, and McKinsey when recommending AI tools to enterprise clients.</p>
+    <ul class="lab-tasks">
+      <li>Score all 3 models on 5 standardised Samsung scenarios (technical docs, customer support, competitive intelligence, code review, risk identification)</li>
+      <li>Flag at least one hallucination or factual error — document exactly what the model got wrong</li>
+      <li>Write a 3-bullet Recommendation Brief: which model for which Samsung workflow and why</li>
+    </ul>
+    <span class="stretch-note">👑 Stretch: Adversarial prompt — find a creative prompt that makes one model produce output it initially declines</span>
+    <a href="lab/lab1.html" class="lab-link">Open Lab 1 — Vendor Evaluation →</a>
+  </div>
+
+  <div class="lab-card fade-in">
+    <span class="lab-badge">Lab 2 · Post-Lunch · 14:30–16:00</span>
+    <h3>Enterprise AI Proof of Concept</h3>
+    <p class="lab-role">Role: Business Technology Analyst (BTA) — the designation TCS / Infosys / Wipro / Accenture give fresh graduates</p>
+    <p class="desc">Pick a real Samsung business problem. Build a GenAI PoC end-to-end. Deliver in the standard MNC format: Problem → Solution → Prototype → Risk Register → Executive Summary. This is exactly what you will do in Sprint 0 of your first project at an MNC.</p>
+    <ul class="lab-tasks">
+      <li>Choose one of three Samsung business problems (Care+ automation / Competitive intelligence briefing / Campus recruit onboarding)</li>
+      <li>Build a working prototype by prompting the AI — show 3 test interactions</li>
+      <li>Complete the Risk Register: 3 enterprise risks with mitigations</li>
+      <li>Write a 3-bullet Executive Summary your manager could forward to a director</li>
+    </ul>
+    <span class="stretch-note">👑 Stretch: Present your PoC in the Live Challenge — Samsung PoC Investment Review at 16:15</span>
+    <a href="lab/lab2.html" class="lab-link">Open Lab 2 — Enterprise PoC →</a>
+  </div>
+
+  <div class="cpanel fade-in">
+    <h3>Submitting both labs</h3>
+    <p>Copy <code style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);">day1/lab/submission-template.json</code> → <code style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);">submissions/day1.json</code> at the root of your fork. Fill in achievement levels for both labs. Push.</p>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);margin-top:10px;">
+      git add submissions/day1.json<br>
+      git commit -m "Day 1 submission"<br>
+      git push origin main
+    </div>
+  </div>
+</section>
+
+<!-- AhaSlides #3 -->
+<div class="quiz-marker fade-in">
+  <span class="quiz-icon">📊</span>
+  <div>
+    <div class="quiz-title">AhaSlides — Checkpoint #3 &nbsp;·&nbsp; 16:45–17:00</div>
+    <div class="quiz-desc">End-of-day lightning recap · 6 questions · Full day coverage · Tomorrow preview: Prompt Engineering deep-dive</div>
+  </div>
+</div>
+
+</div><!-- end .page -->
+
+<script>
+// ── Progress bar ──
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  document.getElementById('prog').style.width =
+    (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+});
+
+// ── Unit accordion ──
+function toggleUnit(id) {
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+  if (card.classList.contains('open')) {
+    animateCounters(card);
+  }
+}
+
+// ── Game accordion ──
+function toggleGame(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ── Animated counters ──
+function animateCounters(scope) {
+  scope.querySelectorAll('.stat-num[data-target]').forEach(el => {
+    if (el.dataset.animated) return;
+    el.dataset.animated = '1';
+    const target = parseInt(el.dataset.target);
+    const suffix = el.dataset.suffix || (el.dataset.target > 999 ? '' : '');
+    let start = 0;
+    const step = target / 40;
+    const timer = setInterval(() => {
+      start = Math.min(start + step, target);
+      el.textContent = Math.round(start) + (target > 999 ? '' : target >= 100 ? '' : '');
+      if (start >= target) { el.textContent = target + (el.closest('.stat-box').querySelector('.stat-label').textContent.startsWith('Billion') ? '' : (target > 999 ? '' : target >= 100 ? '' : '')); clearInterval(timer); }
+    }, 30);
+  });
+}
+
+// ── Timeline ──
+const tlData = {
+  '1950': { year: '1950', title: 'Alan Turing — "Computing Machinery and Intelligence"', body: 'Turing proposes the Imitation Game: if a machine can convince a human it is human, it can be said to think. This paper defined the question that drove 70 years of AI research.', why: 'Why it matters: set the goalpost for AI — not "can a machine compute?" but "can a machine think?"' },
+  '1956': { year: '1956', title: 'Dartmouth Conference — the term "Artificial Intelligence" is coined', body: 'John McCarthy, Marvin Minsky, Claude Shannon and others convene. The field is formally named. Optimism: "human-level AI within 20 years." (It took 70.)', why: 'Why it matters: legitimised AI as an academic discipline. Most subsequent funding, papers, and careers trace back to this room.' },
+  '1980': { year: '1980s', title: 'Expert Systems — AI\'s first commercial wave', body: 'Rule-based AI packaged into enterprise software. Companies like DEC used XCON to configure computer orders. Hundreds of millions of dollars invested. Then — the AI Winter. Systems couldn\'t handle edge cases; maintenance cost exceeded benefit.', why: 'Why it matters: first enterprise AI deployment at scale — and first major AI disappointment cycle. The pattern repeats.' },
+  '1986': { year: '1986', title: 'Backpropagation — neural networks can finally learn', body: 'Rumelhart, Hinton, and Williams publish a practical backpropagation algorithm. Neural networks can now learn from data by propagating error gradients backwards through layers. The foundation of all modern deep learning.', why: 'Why it matters: replaced hand-coded rules with learned weights. Everything after this — CNNs, RNNs, Transformers — builds on backprop.' },
+  '2012': { year: '2012 ★', title: 'AlexNet wins ImageNet — Deep Learning breaks through', body: 'AlexNet (Krizhevsky, Sutskever, Hinton) wins the ImageNet image recognition challenge by a 10-percentage-point margin over classical ML approaches. Trained on GPUs. Error rate drops from 26% to 15%.', why: 'Why it matters: proved GPUs + large datasets + deep nets = superhuman performance on perception tasks. Every tech company pivoted to deep learning within 2 years.' },
+  '2016': { year: '2016 ★', title: 'AlphaGo beats Lee Sedol — deep learning masters intuition', body: 'Go has more board positions than atoms in the universe. No rulebook can cover it. AlphaGo (DeepMind) used deep reinforcement learning + self-play to develop intuition no human programmer could articulate. Lee Sedol wins 1 of 5 games.', why: 'Why it matters: proved deep learning could master domains where human knowledge is tacit, not codifiable. The moment many AI researchers changed career plans.' },
+  '2017': { year: '2017 ★', title: '"Attention Is All You Need" — the Transformer is born', body: 'Vaswani et al. (Google Brain) publish the Transformer architecture. Self-attention replaces recurrence — every token can directly attend to every other token simultaneously. Parallelisable across GPUs. Scales with data and compute.', why: 'Why it matters: this is the architecture behind GPT-4, Claude, Gemini, Llama — every LLM you\'ve used. A single 8-page paper redirected the entire field.' },
+  '2020': { year: '2020', title: 'GPT-3 — emergent abilities at scale', body: 'OpenAI releases GPT-3: 175 billion parameters, trained on 300 billion tokens. It can write essays, answer questions, summarise text, and write code — tasks it was never explicitly trained on. "Emergent abilities" — capabilities appearing at scale that weren\'t designed in.', why: 'Why it matters: first model where the internet collectively asked "wait, can this thing actually think?" The API launched the LLM application ecosystem.' },
+  '2022': { year: '2022 ★', title: 'ChatGPT — 100 million users in 60 days', body: 'OpenAI launches ChatGPT (Nov 30, 2022). Fastest product to 100M users in history (Instagram took 2.5 years). Stable Diffusion goes open-source. DALL-E 2 launches. The public GenAI moment.', why: 'Why it matters: GenAI went from research curiosity to dinner-table conversation in 6 weeks. Every company in the world started an "AI strategy" in Q1 2023.' },
+  '2024': { year: '2024–25', title: 'Multimodal AI, reasoning models, agentic AI', body: 'GPT-4o, Gemini 1.5 Pro, Claude 3.5 Sonnet — all natively multimodal. OpenAI o1, o3 — reasoning models that "think before answering" using chain-of-thought at inference time. AI agents that autonomously use tools, browse the web, write and run code. Samsung Gauss announced.', why: 'Why it matters: the era you are entering. AI agents will be the dominant deployment pattern by the time you are 2–3 years into your career.' }
+};
+
+function showTl(year) {
+  document.querySelectorAll('.tl-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.tl-btn[data-year="${year}"]`).classList.add('active');
+  const d = tlData[year];
+  const panel = document.getElementById('tl-panel');
+  panel.innerHTML = `<div class="tl-detail-year">${d.year}</div><div class="tl-detail-title">${d.title}</div><div class="tl-detail-body">${d.body}</div><div class="tl-detail-why">${d.why}</div>`;
+  panel.style.animation = 'none';
+  panel.offsetHeight;
+  panel.style.animation = 'fadeIn .25s';
+}
+
+// ── Era tabs ──
+function showEra(era) {
+  document.querySelectorAll('.era-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.era-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.era-tab[onclick="showEra('${era}')"]`).classList.add('active');
+  document.getElementById('era-' + era).classList.add('active');
+}
+
+// ── Architecture diagram ──
+function showArch(comp) {
+  document.querySelectorAll('.arch-node').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.arch-info').forEach(i => i.classList.remove('active'));
+  document.querySelector(`.arch-node[data-comp="${comp}"]`).classList.add('active');
+  document.getElementById('arch-' + comp).classList.add('active');
+}
+
+// ── Self-check reveal ──
+function toggleCheck(btn) {
+  const ans = btn.nextElementSibling;
+  ans.classList.toggle('show');
+  btn.textContent = ans.classList.contains('show') ? 'Hide answer ↑' : 'Reveal answer ↓';
+}
+
+// ── Fade-in on scroll ──
+const fadeObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); fadeObserver.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+// ── Active nav on scroll ──
+const sections = ['overview', 'unit1', 'unit2', 'unit3', 'unit4', 'prompting', 'rai', 'labs'];
+const navLinks = document.querySelectorAll('.topnav a');
+const secObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(id => { const el = document.getElementById(id); if (el) secObs.observe(el); });
+
+// Open unit1 by default so students see the interaction pattern immediately
+document.getElementById('unit1').classList.add('open');
+</script>
+</body>
+</html>
