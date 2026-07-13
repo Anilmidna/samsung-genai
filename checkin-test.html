@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samsung GenAI — Day 1 Pipeline Test</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0A0F2E; color: #F8FAFF; font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+header {
+  background: #0D1335; border-bottom: 1px solid #1E2A5E;
+  padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: #00D4AA; }
+.header-right { display: flex; align-items: center; gap: 20px; }
+.led { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #00D4AA; margin-right: 8px; box-shadow: 0 0 8px #00D4AA; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+.refresh-pill {
+  background: #1E2A5E; color: #A0B0C8; font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; padding: 5px 14px; border-radius: 20px;
+}
+.refresh-pill strong { color: #00D4AA; }
+
+.container { max-width: 1060px; margin: 0 auto; padding: 36px 24px 80px; }
+
+h1 { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+.subtitle { color: #7A8FA6; font-size: 13px; margin-bottom: 32px; }
+
+.stats-bar {
+  display: flex; gap: 14px; margin-bottom: 32px; flex-wrap: wrap;
+}
+.stat {
+  background: #111830; border: 1px solid #1E2A5E; border-radius: 12px;
+  padding: 18px 22px; flex: 1; min-width: 120px;
+}
+.stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 38px; font-weight: 700; line-height: 1; }
+.stat-label { color: #7A8FA6; font-size: 12px; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat.ready .stat-num { color: #00D4AA; }
+.stat.waiting .stat-num { color: #7A8FA6; }
+.stat.total .stat-num { color: #1428A0; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+
+.card {
+  background: #111830; border: 1px solid #1E2A5E; border-radius: 12px;
+  padding: 18px 16px; transition: all 0.5s ease;
+}
+.card.ready {
+  background: #071B12; border-color: #00D4AA;
+  box-shadow: 0 0 16px rgba(0,212,170,0.12);
+}
+.card-name {
+  font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600;
+  margin-bottom: 4px; min-height: 22px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-github {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #7A8FA6; margin-bottom: 14px;
+}
+.status-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.status-tag.ready { background: #0A2E1E; color: #00D4AA; }
+.status-tag.waiting { background: #1E2A5E; color: #7A8FA6; }
+.status-tag.loading { background: #1E2A5E; color: #4A5A7A; }
+
+.last-update {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #4A5A7A;
+  margin-top: 32px; text-align: center;
+}
+
+#error-msg {
+  background: #2A1010; border: 1px solid #7A2020; border-radius: 10px;
+  padding: 16px 20px; color: #F87171; font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px; margin-bottom: 24px; display: none;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="led"></span>Samsung GenAI — Day 1 Pipeline Test</div>
+  <div class="header-right">
+    <div class="refresh-pill">Refreshing in <strong id="countdown">30</strong>s</div>
+  </div>
+</header>
+
+<div class="container">
+  <h1>Who has pushed their check-in?</h1>
+  <p class="subtitle">Cards turn green the moment a student pushes submissions/checkin.json to their fork. Auto-refreshes every 30 seconds.</p>
+
+  <div id="error-msg"></div>
+
+  <div class="stats-bar">
+    <div class="stat ready"><div class="stat-num" id="st-ready">–</div><div class="stat-label">✅ Pipeline Ready</div></div>
+    <div class="stat waiting"><div class="stat-num" id="st-waiting">–</div><div class="stat-label">⏳ Not Yet</div></div>
+    <div class="stat total"><div class="stat-num" id="st-total">–</div><div class="stat-label">Total on Roster</div></div>
+  </div>
+
+  <div class="grid" id="grid">Loading roster…</div>
+
+  <div class="last-update" id="last-update">—</div>
+</div>
+
+<script>
+const REPO = 'samsung-genai';
+const BRANCH = 'main';
+const PLACEHOLDER = 'Type Your Full Name Here';
+let roster = [];
+let countdownSec = 30;
+let timer = null;
+
+async function loadRoster() {
+  const res = await fetch('./roster.json?t=' + Date.now());
+  if (!res.ok) throw new Error('roster.json not found. Make sure it exists in the repo root.');
+  return await res.json();
+}
+
+async function fetchCheckin(githubUsername) {
+  const url = `https://raw.githubusercontent.com/${githubUsername}/${REPO}/${BRANCH}/submissions/checkin.json?t=${Date.now()}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+function isReady(data) {
+  if (!data) return false;
+  const name = (data.student_name || '').trim();
+  return name.length > 2 && name !== PLACEHOLDER;
+}
+
+async function refresh() {
+  const results = await Promise.all(
+    roster.map(async (s) => {
+      const data = await fetchCheckin(s.github);
+      return {
+        github: s.github,
+        rosterName: s.name || s.github,
+        checkin: data,
+        ready: isReady(data)
+      };
+    })
+  );
+
+  const readyCount = results.filter(r => r.ready).length;
+  const waitingCount = results.length - readyCount;
+
+  document.getElementById('st-ready').textContent = readyCount;
+  document.getElementById('st-waiting').textContent = waitingCount;
+  document.getElementById('st-total').textContent = results.length;
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  // Ready cards first
+  const sorted = [...results].sort((a, b) => (b.ready ? 1 : 0) - (a.ready ? 1 : 0));
+
+  sorted.forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'card ' + (r.ready ? 'ready' : '');
+    const displayName = r.ready ? r.checkin.student_name : r.rosterName;
+    const statusTag = r.ready
+      ? '<span class="status-tag ready">✅ Pipeline Ready</span>'
+      : '<span class="status-tag waiting">⏳ Waiting for push…</span>';
+    card.innerHTML = `
+      <div class="card-name">${escapeHTML(displayName)}</div>
+      <div class="card-github">@${escapeHTML(r.github)}</div>
+      ${statusTag}
+    `;
+    grid.appendChild(card);
+  });
+
+  const now = new Date();
+  document.getElementById('last-update').textContent =
+    `Last refreshed at ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+
+  countdownSec = 30;
+}
+
+function escapeHTML(str) {
+  const d = document.createElement('div');
+  d.textContent = str ?? '';
+  return d.innerHTML;
+}
+
+function startCountdown() {
+  clearInterval(timer);
+  timer = setInterval(() => {
+    countdownSec--;
+    document.getElementById('countdown').textContent = countdownSec;
+    if (countdownSec <= 0) {
+      countdownSec = 30;
+      refresh();
+    }
+  }, 1000);
+}
+
+async function init() {
+  try {
+    roster = await loadRoster();
+    if (!Array.isArray(roster) || roster.length === 0) {
+      document.getElementById('error-msg').style.display = 'block';
+      document.getElementById('error-msg').textContent = 'roster.json is empty. Add student GitHub usernames to roster.json.';
+      return;
+    }
+    await refresh();
+    startCountdown();
+  } catch (e) {
+    document.getElementById('error-msg').style.display = 'block';
+    document.getElementById('error-msg').textContent = e.message;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
