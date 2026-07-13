@@ -1,26 +1,32 @@
 {
   "day": 1,
-  "student_name": "Your Full Name",
-  "github": "your-github-username",
+  "student_name": "Lakshya Agarwal",
+  "github": "AG-1laksh",
 
-  "lab2_team": "Team Name (e.g. Team Alpha)",
-  "lab2_model_used": "SmolLM2-360M-Instruct",
-  "lab2_gradio_url": "https://xxxx.gradio.live",
+  "lab2_team": "Lakshya Agarwal",
+  "lab2_model_used": "HuggingFaceTB/SmolLM2-360M-Instruct",
+  "lab2_gradio_url": "https://1648539d373a6c1a70.gradio.live/",
 
   "lab": "model_face_off",
-  "p1_winner": "chatgpt",
-  "p1_observation": "What stood out comparing models on Prompt 1",
-  "p2_winner": "claude",
-  "p2_observation": "What stood out comparing models on Prompt 2",
-  "p3_winner": "gemini",
-  "p3_observation": "What stood out comparing models on Prompt 3",
+
+  "p1_winner": "HuggingFaceTB/SmolLM2-360M-Instruct",
+  "p1_observation": "SmolLM2 generated a fluent and nice appropriate next-word prediction while remaining fast.",
+
+  "p2_winner": "Qwen/Qwen2.5-0.5B-Instruct",
+  "p2_observation": "Qwen produced the most  accurate prediction due to its larger model size.",
+
+  "p3_winner": "distilgpt2",
+  "p3_observation": "DistilGPT2 generated a valid prediction quickly, but its output was simpler.",
+
   "hallucination_found": false,
-  "hallucination_detail": "Model | What it stated | What is actually correct",
-  "overall_winner": "chatgpt",
-  "biggest_surprise": "One sentence on what surprised you most across all 3 prompts",
+  "hallucination_detail": "No significant hallucinations were observed during the next-word prediction tasks.",
+
+  "overall_winner": "Qwen/Qwen2.5-0.5B-Instruct",
+  "biggest_surprise": "Even though SmolLM2 is smaller than Qwen, it produced surprisingly good predictions while running much faster.",
+
   "stretch_done": false,
   "stretch_prompt": "",
   "stretch_observation": "",
 
-  "submitted_at": ""
+  "submitted_at": "2026-07-13T15:55:00+05:30"
 }
