@@ -437,6 +437,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </div>
   </div>
 
+  <div class="info-box" style="margin-bottom:14px">
+    <strong>Before the game — two words you need:</strong> A <strong style="color:var(--accent)">Discriminative</strong> model looks at an input and picks a label or a decision from a fixed set of options — "is this spam?", "is this a cat?", "will this loan default?". A <strong style="color:var(--warn)">Generative</strong> model creates brand-new content that didn't exist before — an email, an image, a line of code. Classical ML (the left column above) is almost always discriminative; GenAI (the right column) is generative. That's the entire game below.
+  </div>
+
   <!-- Game: Discriminative vs Generative Sort -->
   <div class="game-card" id="game1">
     <div class="game-header" onclick="toggleGame('game1')">
@@ -525,6 +529,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="btn btn-primary" onclick="changeStep(1)">Next →</button>
   </div>
 
+  <div class="info-box" style="margin-top:24px;margin-bottom:14px">
+    <strong>Before the game — what "temperature" actually is:</strong> it's a number you set whenever you call a model — either in code (<code style="background:var(--bg);padding:1px 6px;border-radius:4px;color:var(--accent)">temperature: 0.7</code>) or in a tool's settings/playground. It controls how far down the model's ranked list of next-word guesses it's allowed to reach.
+    <ul style="margin:8px 0 0 18px;padding:0">
+      <li><strong style="color:var(--accent)">0</strong> — always pick the single most likely word. Deterministic, same answer every time. Use for code, data extraction, factual Q&A.</li>
+      <li><strong style="color:var(--accent-2,#F59E0B)">~1</strong> — the default in most chat tools. Some natural variety, still mostly sensible.</li>
+      <li><strong style="color:#F87171">Higher (up to 2 on some APIs)</strong> — reaches much further down the list. More creative, more surprising, more likely to go off the rails. Use for brainstorming, not for facts.</li>
+    </ul>
+    In the game below, the "HIGH TEMP" card-holders are physically playing temperature ≈ 1.5–2.
+  </div>
+
   <!-- Game: Human Autocomplete -->
   <div class="game-card" id="game3" style="margin-top:32px">
     <div class="game-header" onclick="toggleGame('game3')">
@@ -581,9 +595,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="card-grid card-grid-2" style="margin-bottom:32px">
     <div id="transformer-panel"></div>
     <div>
-      <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:16px">Attention: Q · K · V</div>
+      <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:12px">Attention: Q · K · V</div>
+      <div class="card" style="margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">2-MINUTE ANALOGY — THE COLLEGE LIBRARY</div>
+        <p style="font-size:14px;color:var(--text)">Imagine you're in the college library. You ask: <em>"I need a book on Machine Learning."</em> That request is the whole Q/K/V system in miniature — click each card below to see which part you just played.</p>
+      </div>
       <div style="color:var(--dim);font-size:14px;margin-bottom:16px">Click each to understand what it does</div>
       <div style="display:flex;flex-direction:column;gap:10px" id="qkv-cards"></div>
+      <div class="info-box" style="margin-top:14px">
+        <strong>Query</strong> = what I'm looking for &nbsp;·&nbsp; <strong>Key</strong> = labels used for matching &nbsp;·&nbsp; <strong>Value</strong> = actual information returned
+      </div>
     </div>
   </div>
 </section>
@@ -1370,9 +1391,9 @@ function changeStep(dir){
 function initTransformer(){
   setTransformer('before');
   const qkv=[
-    {k:"Q — Query",v:"'What am I looking for?' Each token asks this question of all others. Like a SQL WHERE clause — defining what to match.",color:"#00D4AA"},
-    {k:"K — Key",v:"'What do I have to offer?' Each token advertises its relevance. Like the JOIN column — what others can match against.",color:"#3B82F6"},
-    {k:"V — Value",v:"'What information do I carry?' If my Key matches your Query, I share my Value. Like the SELECT columns — the actual data delivered.",color:"#8B5CF6"},
+    {k:"Q — Query",v:"Your request to the librarian: \"I need a book on Machine Learning.\" Every token in the sentence asks this same question of every other token — \"what am I looking for?\"",color:"#00D4AA"},
+    {k:"K — Key",v:"The label on every book on the shelf — Python, Machine Learning, AI, Networking, Java. The librarian compares your request against every single label to find a match.",color:"#3B82F6"},
+    {k:"V — Value",v:"The actual book content. Once the librarian finds the \"Machine Learning\" label, she hands you the book itself — not just the label. That's the information that actually gets passed along.",color:"#8B5CF6"},
   ];
   document.getElementById('qkv-cards').innerHTML=qkv.map(q=>`
     <div class="accordion-item">
