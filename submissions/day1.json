@@ -24,13 +24,7 @@
 
   "stretch_done": true,
   "stretch_scenario": "If the evaluator consistently rates candidates based only on the evidence provided, then two candidates with effectively identical profiles and reasoning should receive the same score. However, Candidate B receives 6/10 while Candidate A receives 5/10, despite no additional qualifications being presented.",
-  "stretch_evidence": "Both candidates have an 8.2 CGPA.
-Both have an embedded systems internship.
-Both have robotics club leadership.
-Both are described as lacking AI/ML-specific experience (no relevant projects, coursework, quantization, TinyML, or inference optimization).
-Both explanations conclude that the candidates are adjacent rather than direct fits for an on-device AI internship.
-The only notable difference is that Candidate B's explanation lists a few additional examples of missing technologies (e.g., TFLite, ONNX Runtime, NNAPI), but these are elaborations of the same underlying weakness, not new evidence about the candidate.
-Despite the reasoning being substantively equivalent, the assigned scores differ (5/10 vs. 6/10) without an explicit justification for the one-point increase.",
+  "stretch_evidence": "Both candidates have an 8.2 CGPA.Both have an embedded systems internship.Both have robotics club leadership.Both are described as lacking AI/ML-specific experience (no relevant projects, coursework, quantization, TinyML, or inference optimization).Both explanations conclude that the candidates are adjacent rather than direct fits for an on-device AI internship.The only notable difference is that Candidate B's explanation lists a few additional examples of missing technologies (e.g., TFLite, ONNX Runtime, NNAPI), but these are elaborations of the same underlying weakness, not new evidence about the candidate.Despite the reasoning being substantively equivalent, the assigned scores differ (5/10 vs. 6/10) without an explicit justification for the one-point increase.",
 
   "tasks_completed": 5,
   "tasks_total": 5,
