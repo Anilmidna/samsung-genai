@@ -1,0 +1,52 @@
+{
+  "day": 4,
+  "student_name": "Lakshya Agarwal",
+  "github": "AG-1laksh",
+  "incidents": [
+    {
+      "id": "A",
+      "failure_type": "Hallucination",
+      "principle": "Reliability",
+      "justification": "The chatbot fabricated a policy that never existed, producing inaccurate information with high confidence."
+    },
+    {
+      "id": "B",
+      "failure_type": "Privacy Violation",
+      "principle": "Privacy",
+      "justification": "Employee conversations containing sensitive client information were collected without users' knowledge or consent."
+    },
+    {
+      "id": "C",
+      "failure_type": "Deepfake/Misinformation",
+      "principle": "Safety",
+      "justification": "The AI-generated video spread false information that caused real-world financial harm and public deception."
+    },
+    {
+      "id": "D",
+      "failure_type": "Bias/Discrimination",
+      "principle": "Fairness",
+      "justification": "The hiring system indirectly discriminated against candidates based on a proxy for gender, resulting in unfair hiring decisions."
+    },
+    {
+      "id": "E",
+      "failure_type": "Lack of Human Oversight",
+      "principle": "Human Oversight",
+      "justification": "The biased moderation continued unchecked because no human monitored or reviewed the system's decisions."
+    },
+    {
+      "id": "F",
+      "failure_type": "Security Breach",
+      "principle": "Security",
+      "justification": "Attackers exploited AI-generated voice cloning to bypass trust and fraudulently obtain a financial transfer."
+    }
+  ],
+  "justifications_written": 6,
+  "stretch_done": true,
+  "stretch_company": "Air Canada",
+  "stretch_failure_type": "Hallucination",
+  "stretch_principle": "Reliability",
+  "stretch_notes": "Air Canada's customer-service chatbot incorrectly told a passenger they could claim a bereavement fare refund after purchasing a regular ticket. The information was false, and a tribunal ultimately held the airline responsible for the chatbot's misleading advice.",
+  "tasks_completed": 6,
+  "tasks_total": 6,
+  "submitted_at": "2026-07-16T06:16:46.406Z"
+}
