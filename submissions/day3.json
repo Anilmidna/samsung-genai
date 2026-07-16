@@ -1,0 +1,20 @@
+{
+  "day": 3,
+  "student_name": "Lakshya Agarwal",
+  "github": "AG-1laksh",
+  "ir_hallucination_done": true,
+  "ir_bias_done": true,
+  "ir_guardrail_builder_done": true,
+  "ir_battle_complete": true,
+  "ir_battle_blocked": 8,
+  "ir_battle_total": 8,
+  "rag_scenario": "C",
+  "rag_no_rag_summary": "All three sounded confident and gave the correct answer but gemini looked little confused.",
+  "rag_grounded_summary": "all three were precise and accurate.",
+  "rag_judgement": "fixed_wrong",
+  "stretch_done": true,
+  "stretch_notes": "No. According to the provided document, the Galaxy Book5 Pro's memory is soldered on-board and is not user-upgradeable after purchase. The storage, however, is a separately replaceable NVMe SSD.",
+  "tasks_completed": 6,
+  "tasks_total": 6,
+  "submitted_at": "2026-07-15T06:20:51.144Z"
+}

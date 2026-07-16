@@ -1,4 +1,6 @@
+const fs = require('fs');
 const https = require('https');
+const path = require('path');
 
 const GITHUB_OWNER = process.env.GITHUB_OWNER || "REPLACE_ME";
 const GITHUB_REPO  = process.env.GITHUB_REPO  || "samsung-genai";
@@ -23,8 +25,26 @@ function fetchJSON(url) {
   });
 }
 
+function fetchLocalJSON(filePath) {
+  try {
+    if (!fs.existsSync(filePath)) return null;
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
 function rosterUrl() {
   return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${BRANCH}/roster.json`;
+}
+
+function localRosterPath() {
+  return [
+    path.resolve(process.cwd(), 'roster.json'),
+    path.resolve(process.cwd(), '../roster.json'),
+    path.resolve(__dirname, '../../roster.json'),
+    path.resolve(__dirname, '../../../roster.json'),
+  ];
 }
 
 function submissionUrl(username, day) {
@@ -53,7 +73,7 @@ function defaultRule(sub) {
 
 // Day 3 bespoke rule (deliberate exception, see Section 3b/3c): Lab 1's Guardrail Battle score
 // (ir_battle_blocked/ir_battle_total) is computed by the Interrogation Room app from the model's
-// actual response, not self-reported like tasks_completed — so it's used as an additional gate on
+// actual response, not self-reported like tasks_completed, so it's used as an additional gate on
 // top of the standard completion percentage, not folded into tasks_completed itself.
 function day3Rule(sub) {
   if (!hasName(sub)) return null;
@@ -89,7 +109,7 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers, body: JSON.stringify(cache) };
   }
 
-  const roster = await fetchJSON(rosterUrl());
+  const roster = localRosterPath().map(fetchLocalJSON).find(Array.isArray) || await fetchJSON(rosterUrl());
   if (!Array.isArray(roster) || roster.length === 0) {
     return { statusCode: 200, headers, body: JSON.stringify({ error: 'roster_empty' }) };
   }
@@ -125,7 +145,7 @@ exports.handler = async (event) => {
   students.sort((a, b) => b.totalScore - a.totalScore || a.name.localeCompare(b.name));
   const ranked = students.map((s, i) => ({ ...s, rank: i + 1 }));
 
-  // Then re-sort alphabetically by name for display — rank/medal above still reflects real standing
+  // Then re-sort alphabetically by name for display; rank above still reflects real standing
   ranked.sort((a, b) => a.name.localeCompare(b.name));
 
   const payload = {

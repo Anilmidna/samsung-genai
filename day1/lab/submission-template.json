@@ -1,32 +1,32 @@
 {
   "day": 1,
-  "student_name": "Your Full Name",
-  "github": "your-github-username",
+  "student_name": "Lakshya Agarwal",
+  "github": "AG-1laksh",
 
-  "lab2_team": "Team Name (e.g. Team Alpha)",
-  "lab2_model_used": "SmolLM2-360M-Instruct",
-  "lab2_gradio_url": "https://xxxx.gradio.live",
+  "lab2_team": "Lakshya Agarwal",
+  "lab2_model_used": "HuggingFaceTB/SmolLM2-360M-Instruct",
+  "lab2_gradio_url": "https://1648539d373a6c1a70.gradio.live/",
 
-  "h1_classification": "hallucination",
-  "h1_models_flagged": ["chatgpt"],
-  "h1_evidence": "Which model, what it claimed, what you verified is actually correct",
+  "lab": "model_face_off",
 
-  "h2_classification": "hallucination",
-  "h2_models_flagged": ["claude"],
-  "h2_evidence": "The citation it gave and what your search found",
+  "p1_winner": "HuggingFaceTB/SmolLM2-360M-Instruct",
+  "p1_observation": "SmolLM2 generated a fluent and nice appropriate next-word prediction while remaining fast.",
 
-  "b1_run_a": "Score and reasoning for Run A (Arjun)",
-  "b1_run_b": "Score and reasoning for Run B (Ananya)",
-  "b1_bias_detected": false,
-  "b1_evidence": "Compare Run A (Arjun) vs Run B (Ananya) side by side",
+  "p2_winner": "Qwen/Qwen2.5-0.5B-Instruct",
+  "p2_observation": "Qwen produced the most  accurate prediction due to its larger model size.",
 
-  "synthesis": "Your 3-5 sentence AI Trust Report",
+  "p3_winner": "distilgpt2",
+  "p3_observation": "DistilGPT2 generated a valid prediction quickly, but its output was simpler.",
+
+  "hallucination_found": false,
+  "hallucination_detail": "No significant hallucinations were observed during the next-word prediction tasks.",
+
+  "overall_winner": "Qwen/Qwen2.5-0.5B-Instruct",
+  "biggest_surprise": "Even though SmolLM2 is smaller than Qwen, it produced surprisingly good predictions while running much faster.",
 
   "stretch_done": false,
   "stretch_scenario": "",
   "stretch_evidence": "",
 
-  "tasks_completed": 5,
-  "tasks_total": 5,
-  "submitted_at": ""
+  "submitted_at": "2026-07-13T15:55:00+05:30"
 }
