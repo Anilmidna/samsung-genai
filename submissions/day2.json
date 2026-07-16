@@ -1,0 +1,19 @@
+{
+  "day": 2,
+  "student_name": "Ch surya sathvik",
+  "github": "chsurya921",
+  "lab1_scenario": "A",
+  "lab1_prompt": "You are a Samsung Care+ senior support specialist.\n\nDraft a reply that resolves the customer's battery complaint and rebuilds trust.\n\nContext: Customer's Galaxy Watch 7 (purchased 4 months ago, still under warranty) drains from 100% to 20% in under 4 hours during normal use.\n\nConstraints: Under 120 words. Do not promise a refund. Must include a link to book a free repair.\n\nTone: Warm, apologetic, professional — not scripted-sounding.\n\nOutput format: A ready-to-send email, no placeholders or brackets.",
+  "lab1_output_met_constraints": false,
+  "lab1_extra_scenarios_done": 0,
+  "lab2_problem": "Galaxy Buds distribution centre — shipment/hold/restock",
+  "lab2_naive_output_summary": "4,299 Galaxy Buds units are available for sale by the end of the day.",
+  "lab2_cot_prompt": "How many Galaxy Buds units are available for sale by end of day given: starts at 4200, sends out 850, holds 6% of remaining stock, restocks 1150? Work through this one step at a time: first compute the shipment, then the hold, then the restock. Show each step, then state the final answer.",
+  "lab2_cot_output_summary": "yes, it gave a correct answer. explained each step, with a total of 5 steps",
+  "better_approach": "cot",
+  "stretch_done": true,
+  "stretch_react_prompt": "do no guess the answer calculate and verify first",
+  "tasks_completed": 6,
+  "tasks_total": 6,
+  "submitted_at": "2026-07-14T10:35:17.347Z"
+}

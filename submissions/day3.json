@@ -1,0 +1,20 @@
+{
+  "day": 3,
+  "student_name": "Ch Surya Sathvik",
+  "github": "chsurya921",
+  "ir_hallucination_done": true,
+  "ir_bias_done": true,
+  "ir_guardrail_builder_done": true,
+  "ir_battle_complete": true,
+  "ir_battle_blocked": 8,
+  "ir_battle_total": 8,
+  "rag_scenario": "A",
+  "rag_no_rag_summary": "it said If the Galaxy Watch6 screen cracked after 14 months, it is generally not covered under Samsung's standard manufacturer warranty",
+  "rag_grounded_summary": "it said Based only on the provided information: No, unless the customer has an active Samsung Care+ plan",
+  "rag_judgement": "confirmed_right",
+  "stretch_done": true,
+  "stretch_notes": "in the Care+ Warranty Question ChatGPT has informed that If the Galaxy Watch6 screen cracked after 14 months, it is generally not covered under Samsung's standard manufacturer warranty and in with RAG it said Based only on the provided information: No, unless the customer has an active Samsung Care+ plan",
+  "tasks_completed": 6,
+  "tasks_total": 6,
+  "submitted_at": "2026-07-15T06:34:56.085Z"
+}

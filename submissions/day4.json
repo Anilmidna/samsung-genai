@@ -1,0 +1,52 @@
+{
+  "day": 4,
+  "student_name": "Ch Surya Sathvik",
+  "github": "chsurya921",
+  "incidents": [
+    {
+      "id": "A",
+      "failure_type": "Hallucination",
+      "principle": "Accountability",
+      "justification": "This specific incident is classified as an AI hallucination leading to a negligible misrepresentation or unauthorized commitment failure type."
+    },
+    {
+      "id": "B",
+      "failure_type": "Lack of Human Oversight",
+      "principle": "Transparency",
+      "justification": "This incident represents a severe privacy breach and an unauthorized surveillance failure, characterized by a complete breakdown of data protection transparency"
+    },
+    {
+      "id": "C",
+      "failure_type": "Deepfake/Misinformation",
+      "principle": "Fairness",
+      "justification": "This incident is classified as a Synthetic Impersonation (Deepfake) Market Manipulation failure type ["
+    },
+    {
+      "id": "D",
+      "failure_type": "Bias/Discrimination",
+      "principle": "Fairness",
+      "justification": "This case mimics the historic Amazon AI recruiting tool failure, where an automated hiring system taught itself to discriminate against female candidates by analyzing historical data patterns."
+    },
+    {
+      "id": "E",
+      "failure_type": "Lack of Human Oversight",
+      "principle": "Human Oversight",
+      "justification": "This incident is classified as an Unmonitored Algorithmic Drifting and Disparate Impact Censorship failure type."
+    },
+    {
+      "id": "F",
+      "failure_type": "Deepfake/Misinformation",
+      "principle": "Privacy",
+      "justification": "This incident is classified as an AI-Synthesized Voice Cloning (Vishing) Financial Fraud failure type."
+    }
+  ],
+  "justifications_written": 6,
+  "stretch_done": true,
+  "stretch_company": "Tessa",
+  "stretch_failure_type": "Deepfake/Misinformation",
+  "stretch_principle": "Fairness",
+  "stretch_notes": "he principle violated hardest was Do No Harm (Beneficence) and Vendor Governance within a highly vulnerable cohort.",
+  "tasks_completed": 6,
+  "tasks_total": 6,
+  "submitted_at": "2026-07-16T06:25:53.185Z"
+}
